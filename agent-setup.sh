@@ -1,10 +1,11 @@
 #!/bin/sh
 
+AGENT_NAME="coffee-agent.sh"
 POSTSTART='/etc/persistent/rc.poststart'
 MARKER="coffee-agent"
 MARKER_START="### ${MARKER}-start ###"
 MARKER_END="### ${MARKER}-end   ###"
-AGENT_SCRIPT="/etc/persistent/bin/coffee-agent.sh"
+AGENT_SCRIPT="/etc/persistent/bin/${AGENT_NAME}"
 
 SHELL="/bin/sh"
 SHELL_FIRST_LINE="#!${SHELL}"
