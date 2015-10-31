@@ -5,7 +5,7 @@ CACHE_FILE="/tmp/tmp-coffee-agent-values.txt"
 
 # one sample consists of N subsamples
 SUBSAMPLES_TAKE_N=5
-SUBSAMPLES_SLEEP_BETWEEN=1
+SUBSAMPLES_SLEEP_BETWEEN=2
 
 set -x
 
@@ -14,10 +14,12 @@ read_sensor() {
     if [ -z ${COFFEE_DEBUG} ]
     then
         POWER=$(cat /proc/power/active_pwr1)
+        POWER=$(awk -v pwr=${POWER} 'BEGIN{print int(pwr)}')
     else
-        POWER=$(</dev/urandom tr -dc 0-9 | dd bs=3 count=1)
+        #POWER=$(</dev/urandom tr -dc 0-9 | dd bs=1 count=1)
+        #POWER=$(awk -v pwr=${POWER} 'BEGIN{print int(pwr) * 100}')
+        POWER=$(awk 'BEGIN{srand(); print int(rand()+1.9) * 1000}')
     fi
-    POWER=$(awk -v pwr=${POWER} 'BEGIN{print int(pwr)}')
     echo $POWER
 }
 
@@ -36,12 +38,38 @@ take_one_sample() {
     echo ${AVERAGE}
 }
 
+get_time() {
+    TIME=$(date | sed 's/ /%20/g')
+    #TIME=$(date +%s)
 
-calc_sample() {
+    echo ${TIME}
+}
+
+collect_data() {
+    PREV_VALUE=-1
+    VALUES=""
+    START_TIME=$(get_time)
     while true; do
-        VALUE=$( take_one_sample )
+        VALUE=$(take_one_sample)
         echo $(date) ${VALUE} >> ${CACHE_FILE}
+        VALUES=${VALUES}","${VALUE}
+        if [ ${VALUE} -ne ${PREV_VALUE} ]; then
+            send_data "${VALUES}" "${START_TIME}" "$(get_time)"
+            VALUES=""
+            START_TIME=$(get_time)
+        fi
+        PREV_VALUE=${VALUE}
     done
 }
 
-calc_sample
+send_data() {
+    VALUES=$1
+    START_TIME=$2
+    END_TIME=$3
+
+    wget -O - --post-data "data=${VALUES}&start=${START_TIME}&end=${END_TIME}" http://172.16.1.22:5000/v1/post_data
+
+}
+
+collect_data
+
