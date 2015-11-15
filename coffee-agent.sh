@@ -52,11 +52,15 @@ collect_data() {
     while true; do
         VALUE=$(take_one_sample)
         echo $(date) ${VALUE} >> ${CACHE_FILE}
-        VALUES=${VALUES}","${VALUE}
+        if [ -z ${VALUES} ]; then
+            VALUES=${VALUE}
+            START_TIME=$(get_time)
+        else
+            VALUES=${VALUES}","${VALUE}
+        fi
         if [ ${VALUE} -ne ${PREV_VALUE} ]; then
             send_data "${VALUES}" "${START_TIME}" "$(get_time)"
             VALUES=""
-            START_TIME=$(get_time)
         fi
         PREV_VALUE=${VALUE}
     done
@@ -67,7 +71,7 @@ send_data() {
     START_TIME=$2
     END_TIME=$3
 
-    wget -O - --post-data "data=${VALUES}&start=${START_TIME}&end=${END_TIME}" http://172.16.1.22:5000/v1/post_data
+    wget -O - --post-data "values=${VALUES}&start=${START_TIME}&end=${END_TIME}" http://172.16.1.22:5000/v1/post_data
 
 }
 
