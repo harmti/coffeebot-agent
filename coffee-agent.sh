@@ -59,8 +59,10 @@ collect_data() {
             VALUES=${VALUES}","${VALUE}
         fi
         if [ ${VALUE} -ne ${PREV_VALUE} ]; then
-            send_data "${VALUES}" "${START_TIME}" "$(get_time)"
-            VALUES=""
+            RET=$(send_data "${VALUES}" "${START_TIME}" "$(get_time)")
+            if [ ${RET} -eq 0 ]; then
+                VALUES=""
+            fi
         fi
         PREV_VALUE=${VALUE}
     done
@@ -71,7 +73,13 @@ send_data() {
     START_TIME=$2
     END_TIME=$3
 
-    wget -O - --post-data "values=${VALUES}&start=${START_TIME}&end=${END_TIME}" http://172.16.1.22:5000/v1/post_data
+    wget -O - --quiet --post-data "values=${VALUES}&start=${START_TIME}&end=${END_TIME}" http://172.16.1.22:5000/v1/post_data >> ${CACHE_FILE}
+    
+    if [ $? -ne 0 ]; then
+        echo 1
+    else
+        echo 0
+    fi
 
 }
 
