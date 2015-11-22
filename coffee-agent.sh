@@ -54,7 +54,6 @@ collect_data() {
         echo $(date) ${VALUE} >> ${CACHE_FILE}
         if [ -z ${VALUES} ]; then
             VALUES=${VALUE}
-            START_TIME=$(get_time)
         else
             VALUES=${VALUES}","${VALUE}
         fi
@@ -62,6 +61,7 @@ collect_data() {
             RET=$(send_data "${VALUES}" "${START_TIME}" "$(get_time)")
             if [ ${RET} -eq 0 ]; then
                 VALUES=""
+                START_TIME=$(get_time)
             fi
         fi
         PREV_VALUE=${VALUE}
