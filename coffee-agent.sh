@@ -1,13 +1,17 @@
 #!/bin/sh
 
+AGENT_ID_FILE="/etc/persistent/bin/${AGENT_NAME}.id"
 
 CACHE_FILE="/tmp/tmp-coffee-agent-values.txt"
 
-if [ -z ${COFFEE_DEBUG} ]; then
+if [ ! -z ${COFFEE_DEBUG} ]; then
     SERVER="http://172.16.1.22:5000"
 else
     SERVER="fresh-coffee-server.herokuapp.com"
 fi
+
+#SERVER="http://172.16.1.22:5000"
+
 
 SERVICE_URL="${SERVER}/v1/post_data"
 
@@ -17,6 +21,12 @@ SUBSAMPLES_TAKE_N=5
 SUBSAMPLES_SLEEP_BETWEEN=2
 
 set -x
+
+if [ ! -f {AGENT_ID_FILE} ]; then
+    AGENT_ID=$(</dev/urandom tr -dc 0-9A-F | dd bs=1 count=8)
+else
+    AGENT_ID=$(cat ${AGENT_ID_FILE})
+fi
 
 read_sensor() {
 
@@ -84,7 +94,7 @@ send_data() {
     START_TIME=$2
     END_TIME=$3
 
-    wget -O - --quiet --post-data "values=${VALUES}&start=${START_TIME}&end=${END_TIME}" ${SERVICE_URL} >> ${CACHE_FILE}
+    wget -O - --quiet --post-data "id=${AGENT_ID}&values=${VALUES}&start=${START_TIME}&end=${END_TIME}" ${SERVICE_URL} >> ${CACHE_FILE}
     
     if [ $? -ne 0 ]; then
         echo 1
