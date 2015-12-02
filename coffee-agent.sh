@@ -22,6 +22,9 @@ SUBSAMPLES_SLEEP_BETWEEN=2
 
 set -x
 
+# make sure power is on
+echo 1 > /proc/power/relay1
+
 if [ ! -f {AGENT_ID_FILE} ]; then
     AGENT_ID=$(</dev/urandom tr -dc 0-9A-F | dd bs=1 count=8)
 else
