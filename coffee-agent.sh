@@ -1,5 +1,6 @@
 #!/bin/sh
 
+AGENT_NAME="coffee-agent"
 AGENT_ID_FILE="/etc/persistent/bin/${AGENT_NAME}.id"
 
 CACHE_FILE="/tmp/tmp-coffee-agent-values.txt"
@@ -39,7 +40,7 @@ read_sensor() {
     else
         #POWER=$(</dev/urandom tr -dc 0-9 | dd bs=1 count=1)
         #POWER=$(awk -v pwr=${POWER} 'BEGIN{print int(pwr) * 100}')
-        POWER=$(awk 'BEGIN{srand(); print int(rand()+1.9) * 1000}')
+        POWER=$(awk 'BEGIN{srand(); x=rand(); print int(x*x*x*x * 2000)}')
     fi
     echo $POWER
 }
