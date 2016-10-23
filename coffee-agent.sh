@@ -3,15 +3,13 @@
 AGENT_NAME="coffee-agent"
 AGENT_ID_FILE="/etc/persistent/bin/${AGENT_NAME}.id"
 
-CACHE_FILE="/tmp/tmp-coffee-agent-values.txt"
+LOG_FILE="/tmp/tmp-coffee-agent-log.txt"
 
 if [ ! -z ${COFFEE_DEBUG} ]; then
-    SERVER="http://172.16.1.22:5000"
+    SERVER="http://localhost:5000"
 else
     SERVER="fresh-coffee-server.herokuapp.com"
 fi
-
-#SERVER="http://172.16.1.22:5000"
 
 
 SERVICE_URL="${SERVER}/v1/post_data"
@@ -25,6 +23,9 @@ set -x
 
 # make sure power is on
 echo 1 > /proc/power/relay1
+
+# remove old log files
+rm -f $LOG_FILE
 
 if [ ! -f {AGENT_ID_FILE} ]; then
     AGENT_ID=$(</dev/urandom tr -dc 0-9A-F | dd bs=1 count=8)
@@ -74,7 +75,7 @@ collect_data() {
     START_TIME=$(get_time)
     while true; do
         VALUE=$(take_one_sample)
-        echo $(date) ${VALUE} >> ${CACHE_FILE}
+        echo "$(date) Value:${VALUE}" >> ${LOG_FILE}
         if [ -z ${VALUES} ]; then
             VALUES=${VALUE}
         else
@@ -98,7 +99,7 @@ send_data() {
     START_TIME=$2
     END_TIME=$3
 
-    wget -O - --quiet --post-data "id=${AGENT_ID}&values=${VALUES}&start=${START_TIME}&end=${END_TIME}" ${SERVICE_URL} >> ${CACHE_FILE}
+    wget -O - --quiet --post-data "id=${AGENT_ID}&values=${VALUES}&start=${START_TIME}&end=${END_TIME}" ${SERVICE_URL} >> ${LOG_FILE}
     
     if [ $? -ne 0 ]; then
         echo 1
