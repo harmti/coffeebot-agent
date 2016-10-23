@@ -37,4 +37,4 @@ fi
 cfgmtd -w -p /etc
 
 # should reboot?
-# reboot
+reboot
