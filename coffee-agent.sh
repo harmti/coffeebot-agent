@@ -2,27 +2,30 @@
 
 AGENT_NAME="coffee-agent"
 AGENT_ID_FILE="/etc/persistent/bin/${AGENT_NAME}.id"
+AGENT_CONFIG_FILE="/etc/persistent/bin/${AGENT_NAME}.cfg"
 
 LOG_FILE="/tmp/tmp-coffee-agent-log.txt"
 
 if [ ! -z ${COFFEE_DEBUG} ]; then
     SERVER="http://localhost:5000"
-else
-    SERVER="fresh-coffee-server.herokuapp.com"
+    AGENT_CONFIG_FILE=./${AGENT_NAME}.cfg
+fi
+
+. ${AGENT_CONFIG_FILE}
+
+if [ -z ${SERVER} ]; then
+    SERVER="http://fresh-coffee-server.herokuapp.com"
 fi
 
 
 SERVICE_URL="${SERVER}/v1/post_data"
 
-
-# one sample consists of N subsamples
-SUBSAMPLES_TAKE_N=5
-SUBSAMPLES_SLEEP_BETWEEN=2
-
 set -x
 
 # make sure power is on
-echo 1 > /proc/power/relay1
+if [ ! -z ${COFFEE_DEBUG} ]; then
+    echo 1 > /proc/power/relay1
+fi
 
 # remove old log files
 rm -f $LOG_FILE
