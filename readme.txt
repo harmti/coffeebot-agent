@@ -1,10 +1,15 @@
 
-ssh -oKexAlgorithms=+diffie-hellman-group1-sha1  admin@172.16.10.241
+FreshCoffee agent for Ubiquiti Networks mFi mPower products https://www.ubnt.com/mfi/mpower/.
 
+Tested only on mPower mini. 
 
-Compile 
--------
-Install ccache subversion libncurses-dev
+Tuo install run:
 
+./install.sh <mpower-address> <coffee-server-address> <username> <pwd>
 
--------
+for example:
+
+./install.sh coffee-agent.example.com http://coffee-server.example.com ubnt ubnt
+
+See coffee-server/README for server setup instructions. 
+
