@@ -1,7 +1,8 @@
 #!/bin/bash
 
-USER="admin"
-PASSWORD="kahvi123"
+# default user and password
+USER="ubnt"
+PASSWORD="ubnt"
 
 #HOST="172.16.10.177"
 
@@ -17,7 +18,7 @@ SCP_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/scp -p -oKexAlgorithms=+diffie
 SSH_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 
 if [ -z "$1" ]; then
-    echo "Usage $0 <HOST> (<SERVER>)"
+    echo "Usage $0 <HOST> [<SERVER>]  [<USER>]  [<PASSWORD>]"
     exit
 fi
 
@@ -25,6 +26,14 @@ fi
 
 if [ ! -z "$2" ]; then
     echo "SERVER=$2" >> ${MODIFIED_CONFIG}
+fi
+
+if [ ! -z "$3" ]; then
+    USER=$3
+fi
+
+if [ ! -z "$4" ]; then
+    PASSWORD=$4
 fi
 
 
