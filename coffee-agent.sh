@@ -4,8 +4,6 @@ AGENT_NAME="coffee-agent"
 AGENT_ID_FILE="/etc/persistent/bin/${AGENT_NAME}.id"
 AGENT_CONFIG_FILE="/etc/persistent/bin/${AGENT_NAME}.cfg"
 
-LOG_FILE="/tmp/tmp-coffee-agent-log.txt"
-
 if [ ! -z ${COFFEE_DEBUG} ]; then
     SERVER="http://localhost:5000"
     AGENT_CONFIG_FILE=./${AGENT_NAME}.cfg
@@ -53,7 +51,7 @@ read_sensor() {
 take_one_sample() {
     POWER=0
     SUM=0
-    for i in $(seq 1 ${SUBSAMPLES_TAKE_N}) 
+    for i in $(seq 1 ${SUBSAMPLES_TAKE_N})
     do
         POWER=$(read_sensor)
         SUM=$((${POWER} + ${SUM}))
@@ -92,7 +90,7 @@ collect_data() {
                 START_TIME=$(get_time)
             fi
         fi
-        PREV_VALUE=${VALUE} 
+        PREV_VALUE=${VALUE}
         COUNTER=$((COUNTER+1))
     done
 }
@@ -103,7 +101,7 @@ send_data() {
     END_TIME=$3
 
     wget -O - --quiet --post-data "id=${AGENT_ID}&values=${VALUES}&start=${START_TIME}&end=${END_TIME}" ${SERVICE_URL} >> ${LOG_FILE}
-    
+
     if [ $? -ne 0 ]; then
         echo 1
     else
