@@ -14,8 +14,6 @@ AGENT_DIR="/etc/persistent/bin/"
 
 
 MODIFIED_CONFIG=${TEMP_DIR}"/"${CONFIG}
-SCP_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/scp -p -oKexAlgorithms=+diffie-hellman-group1-sha1"
-SSH_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 
 if [ -z "$1" ]; then
     echo "Usage $0 <HOST> [<SERVER>]  [<USER>]  [<PASSWORD>]"
@@ -36,6 +34,8 @@ if [ ! -z "$4" ]; then
     PASSWORD=$4
 fi
 
+SCP_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/scp -p -oKexAlgorithms=+diffie-hellman-group1-sha1"
+SSH_CMD="/usr/bin/sshpass -p ${PASSWORD} /usr/bin/ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 
 HOST=$1
 CLIENT=${USER}@${HOST}
