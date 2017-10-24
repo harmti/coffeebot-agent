@@ -31,6 +31,7 @@ fi
 # create the client id file
 if [ ! -f ${AGENT_ID_FILE} ]; then
     </dev/urandom tr -dc 0-9A-F | dd bs=1 count=8 > ${AGENT_ID_FILE}
+    echo >> ${AGENT_ID_FILE}
 fi
 
 # make changes persistent across reboots

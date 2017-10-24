@@ -28,10 +28,10 @@ fi
 # remove old log files
 rm -f $LOG_FILE
 
-if [ ! -f {AGENT_ID_FILE} ]; then
-    AGENT_ID=$(</dev/urandom tr -dc 0-9A-F | dd bs=1 count=8)
-else
+if [ -f ${AGENT_ID_FILE} ]; then
     AGENT_ID=$(cat ${AGENT_ID_FILE})
+else
+    AGENT_ID=$(</dev/urandom tr -dc 0-9A-F | dd bs=1 count=8)
 fi
 
 read_sensor() {
