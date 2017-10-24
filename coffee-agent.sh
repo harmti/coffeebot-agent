@@ -25,8 +25,10 @@ if [ ! -z ${COFFEE_DEBUG} ]; then
     echo 1 > /proc/power/relay1
 fi
 
-# remove old log files
-rm -f $LOG_FILE
+# remove the old log file if it exists (and is a regular file)
+if [ -f ${LOG_FILE} ]; then
+    rm ${LOG_FILE}
+fi
 
 if [ -f ${AGENT_ID_FILE} ]; then
     AGENT_ID=$(cat ${AGENT_ID_FILE})
