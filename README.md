@@ -9,11 +9,13 @@ Tuo install the agent run:
 
 ```
 ./install.sh <mpower-ip-or-dns-address> <coffee-server-address> <username> <pwd>
+```
 
 for example:
 
 ```
 ./install.sh coffee-agent.example.com http://coffee-server.example.com ubnt ubnt
+```
 
 Agent debugging
 ----------------
